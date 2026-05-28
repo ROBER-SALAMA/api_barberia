@@ -13,7 +13,7 @@ export class Barber {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ default: "N/A", length: 300 })
   name: string;
 
   @ManyToOne(() => Specialty, (specialty) => specialty.barbers, {
