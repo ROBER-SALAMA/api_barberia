@@ -5,6 +5,7 @@ import { User } from "../entities/User";
 import { Specialty } from "../entities/Specialty";
 import { Barber } from "../entities/Barber";
 import { Service } from "../entities/Service";
+import { Appointment } from "../entities/Appointment";
 
 dotenv.config();
 
@@ -25,5 +26,5 @@ export const AppDataSource = new DataSource({
 
   logging: false,
 
-  entities: [User, Specialty, Barber, Service],
+  entities: [User, Specialty, Barber, Service, Appointment],
 });
