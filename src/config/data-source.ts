@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import dotenv from "dotenv";
 import { User } from "../entities/User";
+import { Specialty } from "../entities/Specialty";
 
 dotenv.config();
 
@@ -22,5 +23,5 @@ export const AppDataSource = new DataSource({
 
   logging: false,
 
-  entities: [User],
+  entities: [User, Specialty],
 });
