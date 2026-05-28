@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+
+import { Barber } from "./Barber";
 
 @Entity()
 export class Specialty {
@@ -7,7 +9,10 @@ export class Specialty {
 
   @Column({
     default: "N/A",
-    length: 255,
+    length: 260,
   })
   name: string;
+
+  @OneToMany(() => Barber, (barber) => barber.specialty)
+  barbers: Barber[];
 }
