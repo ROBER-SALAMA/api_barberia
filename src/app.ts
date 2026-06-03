@@ -3,7 +3,6 @@ import cors from "cors";
 
 import usersRoutes from "./routes/users.routes";
 import authRoutes from "./auth/auth.routes";
-import specialtyRoutes from "./routes/specialty.routes";
 import barberRoutes from "./routes/barber.routes";
 import serviceRoutes from "./routes/service.routes";
 import appointmentRoutes from "./routes/appointment.routes";
@@ -16,7 +15,6 @@ app.use(express.json());
 
 app.use("/api/users", usersRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/specialties", specialtyRoutes);
 app.use("/api/barbers", barberRoutes);
 app.use("/api/services", serviceRoutes);
 app.use('/api/appointments', appointmentRoutes);

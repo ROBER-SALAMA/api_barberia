@@ -1,11 +1,8 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../config/data-source";
 import { Barber } from "../entities/Barber";
-import { Specialty } from "../entities/Specialty";
 
 const barberRepository = AppDataSource.getRepository(Barber);
-
-const specialtyRepository = AppDataSource.getRepository(Specialty);
 
 export const getBarbers = async (
   req: Request,
@@ -58,25 +55,10 @@ export const createBarber = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const { name, specialtyId } = req.body;
-
-    const specialty = await specialtyRepository.findOne({
-      where: {
-        id: specialtyId,
-      },
-    });
-
-    if (!specialty) {
-      res.status(404).json({
-        message: "Especialidad no encontrada",
-      });
-
-      return;
-    }
+    const { name } = req.body;
 
     const barber = barberRepository.create({
       name,
-      specialty,
     });
 
     await barberRepository.save(barber);
@@ -98,7 +80,7 @@ export const updateBarber = async (
   try {
     const id = Number(req.params.id);
 
-    const { name, specialtyId } = req.body;
+    const { name } = req.body;
 
     const barber = await barberRepository.findOne({
       where: { id },
@@ -112,22 +94,7 @@ export const updateBarber = async (
       return;
     }
 
-    const specialty = await specialtyRepository.findOne({
-      where: {
-        id: specialtyId,
-      },
-    });
-
-    if (!specialty) {
-      res.status(404).json({
-        message: "Especialidad no encontrada",
-      });
-
-      return;
-    }
-
     barber.name = name;
-    barber.specialty = specialty;
 
     await barberRepository.save(barber);
 
