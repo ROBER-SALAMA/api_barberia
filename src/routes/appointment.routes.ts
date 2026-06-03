@@ -16,7 +16,7 @@ router.get("/", validateJWT, getAppointments);
 
 router.get("/:id", validateJWT, getAppointmentById);
 
-router.post("/", validateJWT, createAppointment);
+router.post("/", createAppointment);
 
 router.put("/:id", validateJWT, updateAppointment);
 

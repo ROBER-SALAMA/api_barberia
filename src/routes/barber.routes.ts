@@ -12,7 +12,7 @@ import { validateJWT } from "../middlewares/auth.middleware";
 
 const router = Router();
 
-router.get("/", validateJWT, getBarbers);
+router.get("/", getBarbers);
 
 router.get("/:id", validateJWT, getBarberById);
 

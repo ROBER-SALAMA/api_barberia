@@ -6,6 +6,8 @@ import { Appointment } from "../entities/Appointment";
 import { User } from "../entities/User";
 import { Barber } from "../entities/Barber";
 import { Service } from "../entities/Service";
+import { AppointmentDetail } from "../entities/AppointmentDetail";
+import { In } from "typeorm";
 
 const appointmentRepository = AppDataSource.getRepository(Appointment);
 
@@ -61,12 +63,15 @@ export const getAppointmentById = async (
   }
 };
 
+const appointmentDetailRepository =
+  AppDataSource.getRepository(AppointmentDetail);
+
 export const createAppointment = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
   try {
-    const { userId, barberId, serviceId, date, time, status } = req.body;
+    const { userId, barberId, date, time, status, services } = req.body;
 
     const user = await userRepository.findOne({
       where: { id: userId },
@@ -76,7 +81,6 @@ export const createAppointment = async (
       res.status(404).json({
         message: "Usuario no encontrado",
       });
-
       return;
     }
 
@@ -88,34 +92,61 @@ export const createAppointment = async (
       res.status(404).json({
         message: "Barbero no encontrado",
       });
-
       return;
     }
 
-    const service = await serviceRepository.findOne({
-      where: { id: serviceId },
+    const servicesFound = await serviceRepository.find({
+      where: {
+        id: In(services),
+      },
     });
 
-    if (!service) {
+    if (servicesFound.length !== services.length) {
       res.status(404).json({
-        message: "Servicio no encontrado",
+        message: "Uno o más servicios no existen",
       });
-
       return;
     }
+
+    const total = servicesFound.reduce(
+      (sum, service) => sum + Number(service.price),
+      0,
+    );
 
     const appointment = appointmentRepository.create({
       user,
       barber,
-      service,
       date,
       time,
       status,
+      total,
     });
 
-    await appointmentRepository.save(appointment);
+    const savedAppointment = await appointmentRepository.save(appointment);
 
-    res.status(201).json(appointment);
+    const details = servicesFound.map((service) =>
+      appointmentDetailRepository.create({
+        appointment: savedAppointment,
+        serviceId: service.id,
+        serviceName: service.name,
+        price: Number(service.price),
+      }),
+    );
+
+    await appointmentDetailRepository.save(details);
+
+    const result = await appointmentRepository.findOne({
+      where: {
+        id: savedAppointment.id,
+      },
+      relations: {
+        details: true,
+        user: true,
+        barber: true,
+      },
+    });
+
+    res.status(201).json(result);
   } catch (error) {
     console.error(error);
 

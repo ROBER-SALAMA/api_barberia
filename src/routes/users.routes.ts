@@ -6,6 +6,6 @@ const router = Router();
 
 router.get("/", validateJWT, getUsers);
 
-router.post("/", validateJWT, createUser);
+router.post("/", createUser);
 
 export default router;

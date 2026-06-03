@@ -4,13 +4,14 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from "typeorm";
 
 import { User } from "./User";
 import { Barber } from "./Barber";
-import { Service } from "./Service";
 
 import { AppointmentStatus } from "../enums/AppointmentStatus";
+import { AppointmentDetail } from "./AppointmentDetail";
 
 @Entity()
 export class Appointment {
@@ -33,14 +34,6 @@ export class Appointment {
   })
   barber: Barber;
 
-  @ManyToOne(() => Service, {
-    eager: true,
-  })
-  @JoinColumn({
-    name: "serviceId",
-  })
-  service: Service;
-
   @Column({
     type: "date",
   })
@@ -52,9 +45,23 @@ export class Appointment {
   time: string;
 
   @Column({
+    type: "decimal",
+    precision: 10,
+    scale: 2,
+    default: 0,
+  })
+  total: number;
+
+  @Column({
     type: "enum",
     enum: AppointmentStatus,
     default: AppointmentStatus.EN_PROCESO,
   })
   status: AppointmentStatus;
+
+  @OneToMany(() => AppointmentDetail, (detail) => detail.appointment, {
+    cascade: true,
+    eager: true,
+  })
+  details: AppointmentDetail[];
 }
